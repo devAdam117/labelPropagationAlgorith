@@ -66,13 +66,6 @@ isClusteringOptimal <- function(g,checkLabels = FALSE){
   return(TRUE)
 }
 
-customSample <- function(vec){
-  if(max(vec)==min(vec)){
-    return(vec)
-  }
-  return(sample(vec))
-}
-
 # handluje labele a name pre dany graf, ak nie su nastavy ich ak su iba nejake tak zvysne vygeneruje ak nie su ziadne tak nastavi uplne vsetky
 initGraphSetter <- function(g){
   # najprv sa pozrie na id/names grafu a setne ten

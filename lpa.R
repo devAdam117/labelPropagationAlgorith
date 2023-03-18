@@ -1,4 +1,5 @@
 library(igraph)
+library(igraphdata)
 source('data.R')
 source('utils.R')
 # samotna funkcia na prevolavanie algoritmu
