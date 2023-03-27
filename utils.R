@@ -14,15 +14,11 @@ algorithmLogic <- function(g,byFixedLabels = FALSE){
     #index id v povodnej sieti
     currentNodeIdx <- which(currentNodeId == V(g)$name)
     #ked sa vyhladava podla int, tak hlada podla poradia V(g)$name, ked podla stringu tak hlada konkretne id
-    neighborIds <- neighbors(g,currentNodeIdx)$name
-    neighborIdxs <- sapply(neighborIds,function(i){
-      which(i == V(g)$name)
-    })
-    neighborLabels <- V(g)$label[neighborIdxs]
+    neighborLabels <- neighbors(g,currentNodeIdx)$label
     # kontig. tabulka -> presampluju sa vysledne stlpce -> vybere sa prvy s maximalnymm stlpcom -> tj. ze ak su dva 
     # uplne rovnake tak vrati spravodlivo nahodne jeden z nich
-    maxFreqLabel <- neighborLabels[1]
     # ak je dlzka==1 tak bol problem so samplovanim tabulky sample(c(1,1,1)) -> 1, 2, 3, tak sa to takto osetrilo...
+    maxFreqLabel <- neighborLabels[1]
     if(length(table(neighborLabels))!=1){
       maxFreqLabel <- names(which.max(sample((table(neighborLabels)))))
     }
@@ -33,17 +29,11 @@ algorithmLogic <- function(g,byFixedLabels = FALSE){
 # lubovolny vektor napr. c(1,100,100,2,6,49) presunie na -> c(1,5,5,2,3,4), teda usporiadava jeho elemtny od najnizsieho po najvacsi
 # vyuzitelnost pri tom aby membership napr nebol 1, 100, 2, 6 ,49 ale 1:5, tym padom dostavame aj relevantnu informaciu o tok, kolko membershipov sa celkovo nachadza pre dany graf
 shiftMembership <- function(vector){
-  uniqueVector <- sort(unique(vector))
-  newVector <- match(vector, uniqueVector)
-  for (i in unique(vector)) {
-    idx <- which(vector == i)
-    if (length(idx) > 1) {
-      newVector[idx[2:length(idx)]] <- newVector[idx[2:length(idx)]] 
-    }
-  }
-  return(newVector)
-  
+  factorX <- factor(vector, levels = unique(vector))
+  intX <- as.integer(factorX)
+  return(intX)
 }
+
 
 
 
@@ -52,11 +42,7 @@ isClusteringOptimal <- function(g,checkLabels = FALSE){
   for(id in ids){
     if(checkLabels==TRUE  && length(g$nameOfFixedLabels) >0 && id %in% g$nameOfFixedLabels) next
     currentNodeIdx <- which(id == ids)
-    neighborIds <- neighbors(g,currentNodeIdx)$name
-    neighborIdxs <- sapply(neighborIds,function(i){
-      which(i == V(g)$name)
-    })
-    neighborLabels <- V(g)$label[neighborIdxs]
+    neighborLabels <- neighbors(g,currentNodeIdx)$label
     maxTblFrequency <- max(table(neighborLabels))
     optimalLabels <- as.vector(names(which(table(neighborLabels) == maxTblFrequency)))
     if(!(V(g)$label[currentNodeIdx]  %in% optimalLabels)   ) {
